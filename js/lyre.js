@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
 	function Lyrebird() {
 		this.analysisTypes = ['sections', 'bars', 'beats', 'fsegments', 'tatums'];
 		this.waveformPoints = {};
-		this.currentType = this.analysisTypes[0];
+		this.currentType = this.analysisTypes[2];
 		this.audioData = [];
 		this.audioContext = null;
 		this.remixer = null;
