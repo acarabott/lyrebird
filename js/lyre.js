@@ -6,30 +6,71 @@ var trackID = 'TRFINBO13C52D7A637';
 var trackURL = 'audio/something.mp3';
 var trackWave = 'data/somethingWave.json';
 
-var remixer, player, track, remixed,
-	$canvas, canvas, context,
-	waveformRequest, waveform, waveformData,
-	waveformPoints, mousePos,
-	secondWave;
+var lyrebird;
 
 jQuery(document).ready(function ($) {
 	'use strict';
 	var audioContext;
 
-	function getMousePos(canvas, evt) {
-		var rect = canvas.getBoundingClientRect();
+	function Lyrebird() {
+		this.analysisTypes = ['sections', 'bars', 'beats', 'fsegments', 'tatums'];
+		this.waveformPoints = {};
+	}
+
+	Lyrebird.prototype.init = function () {
+		var self = this;
+
+		this.audioContext = new webkitAudioContext();
+		this.remixer = createJRemixer(this.audioContext, $, apiKey);
+		this.player = this.remixer.getPlayer();
+
+		this.remixer.remixTrackById(trackID, trackURL, function (t, percent) {
+			self.track = t;
+
+			$('#info').text(percent + "% of the track loaded");
+			if (percent === 100) {
+				$('#info').text(percent + "% of the track loaded, remix time");
+			}
+
+			if (self.track.status === 'ok') {
+				self.drawWaveform();
+			}
+		});
+	};
+
+
+	Lyrebird.prototype.getMousePos = function (canvas, evt) {
+		var rect = this.canvas.getBoundingClientRect();
+
 		return {
 			x: evt.clientX - rect.left,
 			y: evt.clientY - rect.top
 		};
-	}
+	};
 
-	function drawSections(track) {
+	Lyrebird.prototype.createWaveformPoints = function () {
+		var cWidth, cHeight, dur, pos, i, j, type;
+
+		cWidth = parseFloat(this.$canvas.width(), 10);
+		cHeight = parseFloat(this.$canvas.height(), 10);
+		dur = this.track.buffer.duration;
+
+		for (i = 0; i < this.analysisTypes.length; i++) {
+			type = this.analysisTypes[i];
+			this.waveformPoints[type] = [];
+			for (j = 0; j < this.track.analysis[type].length; j++) {
+				pos = (parseFloat(this.track.analysis[type][j].start, 10) / dur) * cWidth;
+				this.waveformPoints[type].push(pos);
+			}
+		}
+	};
+
+	Lyrebird.prototype.drawSections = function (track) {
 		var type, types, cWidth, cHeight, dur, pos, i;
 
-		cWidth = parseFloat($canvas.width(), 10);
-		cHeight = parseFloat($canvas.height(), 10);
-		dur = track.buffer.duration;
+		cWidth = parseFloat(this.$canvas.width(), 10);
+		cHeight = parseFloat(this.$canvas.height(), 10);
+		dur = this.track.buffer.duration;
 
 		types = {
 			sections: {
@@ -50,14 +91,14 @@ jQuery(document).ready(function ($) {
 			}
 		};
 
-		context.beginPath();
+		this.context.beginPath();
 
 		for (type in types)	{
 			if (types.hasOwnProperty(type)) {
 				if (types[type].hasOwnProperty('color')) {
-					context.strokeStyle = types[type].color;
+					this.context.strokeStyle = types[type].color;
 				} else {
-					context.strokeStyle = 'red';
+					this.context.strokeStyle = 'red';
 				}
 
 				// testing
@@ -67,63 +108,50 @@ jQuery(document).ready(function ($) {
 						pos = pos / dur;
 						pos = pos * cWidth;
 
-						context.moveTo(pos, 0);
-						context.lineTo(pos, cHeight);
+						this.context.moveTo(pos, 0);
+						this.context.lineTo(pos, cHeight);
 					}
 				}
 
 			}
 		}
 
-		context.closePath();
-		context.stroke();
-	}
+		this.context.closePath();
+		this.context.stroke();
+	};
 
-	function drawWaveform() {
+	Lyrebird.prototype.drawWaveform = function () {
+		var self = this;
+
 		$.getJSON(trackWave, function (data) {
-			waveformData = data.mid;
-			waveform = new Waveform({
+			self.waveformData = data.mid;
+			self.waveform = new Waveform({
 				container: document.getElementById('canvasContainer'),
-				data: waveformData.slice(0)
+				data: self.waveformData.slice(0)
 			});
 
-			$canvas = $('#canvasContainer canvas');
-			canvas = $canvas[0];
-			context = canvas.getContext('2d');
+			self.$canvas = $('#canvasContainer canvas');
+			self.canvas = self.$canvas[0];
+			self.context = self.canvas.getContext('2d');
 
-			canvas.addEventListener('mousedown', function (evt) {
-				mousePos = getMousePos(canvas, evt);
+			self.canvas.addEventListener('mousedown', function (evt) {
+				self.mousePos = self.getMousePos(self.canvas, evt);
 			}, false);
 
+			self.createWaveformPoints();
 			// drawSections(track);
 
-
-			secondWave = new Waveform({
+			self.secondWave = new Waveform({
 				container: document.getElementById('secondCanvasContainer'),
-				data: waveformData.slice(waveformData.length * 0.5, waveformData.length * 0.51)
+				data: self.waveformData.slice(
+					self.waveformData.length * 0.5,
+					self.waveformData.length * 0.51
+				)
 			});
 
 		});
-	}
+	};
 
-
-	audioContext = new webkitAudioContext();
-	drawWaveform();
-	// remixer = createJRemixer(audioContext, $, apiKey);
-	// player = remixer.getPlayer();
-
-	// remixer.remixTrackById(trackID, trackURL, function (t, percent) {
-	// 	track = t;
-
-	// 	$('#info').text(percent + "% of the track loaded");
-	// 	if (percent === 100) {
-	// 		$('#info').text(percent + "% of the track loaded, remix time");
-	// 	}
-
-	// 	if (track.status === 'ok') {
-	// 		drawWaveform();
-	// 	}
-	// });
-
-
+	lyrebird = new Lyrebird();
+	lyrebird.init();
 });
