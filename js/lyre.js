@@ -85,8 +85,6 @@ jQuery(document).ready(function ($) {
 	Lyrebird.prototype.createWaveformPoints = function () {
 		var dur, pos, i, j, type;
 
-		this.cWidth = parseFloat(this.$canvas.width(), 10);
-		this.cHeight = parseFloat(this.$canvas.height(), 10);
 		dur = this.track.buffer.duration;
 
 		for (i = 0; i < this.analysisTypes.length; i++) {
@@ -94,6 +92,8 @@ jQuery(document).ready(function ($) {
 			this.waveformPoints[type] = [];
 			for (j = 0; j < this.track.analysis[type].length; j++) {
 				pos = (parseFloat(this.track.analysis[type][j].start, 10) / dur) * this.cWidth;
+				pos = Math.max(pos, 1);
+				pos = Math.min(pos, this.cWidth - 1);
 				this.waveformPoints[type].push(pos);
 			}
 		}
@@ -111,7 +111,11 @@ jQuery(document).ready(function ($) {
 			});
 
 			self.$canvas = $('#canvasContainer canvas');
+			self.cWidth = parseFloat(self.$canvas.width(), 10);
+			self.cHeight = parseFloat(self.$canvas.height(), 10);
+
 			self.canvas = self.$canvas[0];
+
 			self.context = self.canvas.getContext('2d');
 
 			self.canvas.addEventListener('mousedown', function (evt) {
