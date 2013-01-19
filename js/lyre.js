@@ -99,7 +99,6 @@ jQuery(document).ready(function ($) {
 		}
 	};
 
-
 	Lyrebird.prototype.drawWaveform = function () {
 		var self = this;
 
@@ -115,15 +114,7 @@ jQuery(document).ready(function ($) {
 			self.cHeight = parseFloat(self.$canvas.height(), 10);
 
 			self.canvas = self.$canvas[0];
-
 			self.context = self.canvas.getContext('2d');
-
-			self.canvas.addEventListener('mousedown', function (evt) {
-				self.mousePos = self.getMousePos(self.canvas, evt);
-			}, false);
-
-			self.createWaveformPoints();
-			self.drawLines();
 
 			self.secondWave = new Waveform({
 				container: document.getElementById('secondCanvasContainer'),
@@ -132,6 +123,8 @@ jQuery(document).ready(function ($) {
 					self.waveformData.length * 0.51
 				)
 			});
+
+			self.createInterface();
 
 		});
 	};
@@ -160,6 +153,20 @@ jQuery(document).ready(function ($) {
 			x: evt.clientX - rect.left,
 			y: evt.clientY - rect.top
 		};
+	};
+
+	Lyrebird.prototype.addMouseAction = function () {
+		var self = this;
+		this.canvas.addEventListener('mousedown', function (event) {
+			self.mousePos = self.getMousePos(this, event);
+			console.log(self.mousePos);
+		}, false);
+	};
+
+	Lyrebird.prototype.createInterface = function () {
+		this.createWaveformPoints();
+		this.drawLines();
+		this.addMouseAction();
 	};
 
 	/**
