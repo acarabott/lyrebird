@@ -1,0 +1,10 @@
+{
+	"response": {
+		"status": {
+			"version": "4.2", "code": 0, "message": "Success"
+		},
+		"track": {
+				"status": "pending", "song_id": "SOCJMRB1367892C0B5", "title": "Something", "artist": "Beatles", "id": "TRFINBO13C52D7A637", "analyzer_version": "3.1.3", "release": "", "artist_id": "AR6XZ861187FB4CECD", "bitrate": 192, "audio_md5": "297d033e321d7c327183b515999a944a", "samplerate": 44100, "md5": "b38a41b4805d6cc5fc44838c9ca4ae23"
+		}
+	}
+}
