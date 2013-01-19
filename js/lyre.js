@@ -9,6 +9,21 @@ var trackWave = 'data/somethingWave.json';
 var remixer, player, track, remixed,
 	waveformRequest, waveform, waveformData;
 
+function drawSections(track) {
+	var cWidth, dur, pos, i;
+
+	cWidth = parseFloat($('#canvas').width(), 10);
+	console.log(cWidth);
+	dur = track.buffer.duration;
+
+	for (i = 0; i < track.analysis.sections.length; i++) {
+		pos = parseFloat(track.analysis.sections[i].start, 10);
+		pos = pos / dur;
+		pos = pos * cWidth;
+		console.log(pos);
+	}
+
+}
 (function () {
 	'use strict';
 	var context;
@@ -26,27 +41,16 @@ var remixer, player, track, remixed,
 			$('#info').text(percent + "% of the track loaded, remix time");
 		}
 
-		// if (track.status === 'ok') {
-		// 	console.log(track.analysis);
-		// }
+		if (track.status === 'ok') {
+			drawSections(track);
+		}
 	});
 
 	$.getJSON(trackWave, function (data) {
 		waveformData = data.mid;
 		waveform = new Waveform({
-			container: document.getElementById('waveform'),
+			container: document.getElementById('canvas'),
 			data: waveformData.slice(0)
 		});
 	});
-
-	// waveformRequest = new XMLHttpRequest();
-	// waveformRequest.open('GET', trackWave, true);
-	// waveformRequest.onload = function () {
-	// 	waveformData = $.parseJSON(waveformRequest.response).mid;
-	// 	waveform = new Waveform({
-	// 		container: document.getElementById('waveform'),
-	// 		data: waveformData.slice(0)
-	// 	});
-	// };
-	// waveformRequest.send();
 }());
