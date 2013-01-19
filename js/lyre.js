@@ -7,30 +7,84 @@ var trackURL = 'audio/something.mp3';
 var trackWave = 'data/somethingWave.json';
 
 var remixer, player, track, remixed,
+	$canvas, canvas, context,
 	waveformRequest, waveform, waveformData;
 
-function drawSections(track) {
-	var cWidth, dur, pos, i;
+jQuery(document).ready(function ($) {
+	'use strict';
+	var audioContext;
 
-	cWidth = parseFloat($('#canvas').width(), 10);
-	console.log(cWidth);
-	dur = track.buffer.duration;
+	function drawSections(track) {
+		var type, types, cWidth, cHeight, dur, pos, i;
 
-	for (i = 0; i < track.analysis.sections.length; i++) {
-		pos = parseFloat(track.analysis.sections[i].start, 10);
-		pos = pos / dur;
-		pos = pos * cWidth;
-		console.log(pos);
+		cWidth = parseFloat($canvas.width(), 10);
+		cHeight = parseFloat($canvas.height(), 10);
+		dur = track.buffer.duration;
+
+		types = {
+			// sections: {
+			// 	color: "yellow"
+			// },
+			bars: {
+				color: "gray"
+			},
+			beats: {
+				color: "blue"
+			},
+			// fsegments: {
+			// 	color: "green"
+			// }
+			// tatums : {
+			// 	color: "orange"
+			// }
+		};
+
+		context.beginPath();
+
+		for (type in types)	{
+			if (types.hasOwnProperty(type)) {
+				if (types[type].hasOwnProperty('color')) {
+					context.strokeStyle = types[type].color;
+				} else {
+					context.strokeStyle = 'red';
+				}
+
+
+				for (i = 0; i < track.analysis[type].length; i++) {
+					pos = parseFloat(track.analysis[type][i].start, 10);
+					pos = pos / dur;
+					pos = pos * cWidth;
+
+					context.moveTo(pos, 0);
+					context.lineTo(pos, cHeight);
+					console.log(pos);
+				}
+			}
+		}
+
+		context.closePath();
+		context.stroke();
 	}
 
-}
-(function () {
-	'use strict';
-	var context;
+	function drawWaveform() {
+		$.getJSON(trackWave, function (data) {
+			waveformData = data.mid;
+			waveform = new Waveform({
+				container: document.getElementById('canvasContainer'),
+				data: waveformData.slice(0)
+			});
 
-	context = new webkitAudioContext();
+			$canvas = $('#canvasContainer canvas');
+			canvas = $canvas[0];
+			context = canvas.getContext('2d');
 
-	remixer = createJRemixer(context, $, apiKey);
+			drawSections(track);
+		});
+	}
+
+
+	audioContext = new webkitAudioContext();
+	remixer = createJRemixer(audioContext, $, apiKey);
 	player = remixer.getPlayer();
 
 	remixer.remixTrackById(trackID, trackURL, function (t, percent) {
@@ -42,15 +96,9 @@ function drawSections(track) {
 		}
 
 		if (track.status === 'ok') {
-			drawSections(track);
+			drawWaveform();
 		}
 	});
 
-	$.getJSON(trackWave, function (data) {
-		waveformData = data.mid;
-		waveform = new Waveform({
-			container: document.getElementById('canvas'),
-			data: waveformData.slice(0)
-		});
-	});
-}());
+
+});
