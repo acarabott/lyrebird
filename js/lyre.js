@@ -9,12 +9,20 @@ var trackWave = 'data/somethingWave.json';
 var remixer, player, track, remixed,
 	$canvas, canvas, context,
 	waveformRequest, waveform, waveformData,
-	waveformPoints,
+	waveformPoints, mousePos,
 	secondWave;
 
 jQuery(document).ready(function ($) {
 	'use strict';
 	var audioContext;
+
+	function getMousePos(canvas, evt) {
+		var rect = canvas.getBoundingClientRect();
+		return {
+			x: evt.clientX - rect.left,
+			y: evt.clientY - rect.top
+		};
+	}
 
 	function drawSections(track) {
 		var type, types, cWidth, cHeight, dur, pos, i;
@@ -82,6 +90,10 @@ jQuery(document).ready(function ($) {
 			$canvas = $('#canvasContainer canvas');
 			canvas = $canvas[0];
 			context = canvas.getContext('2d');
+
+			canvas.addEventListener('mousedown', function (evt) {
+				mousePos = getMousePos(canvas, evt);
+			}, false);
 
 			// drawSections(track);
 
