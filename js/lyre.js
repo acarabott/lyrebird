@@ -1,6 +1,6 @@
 /*jslint newcap: true, plusplus: true, passfail: true, browser: true, devel: true, indent: 4, maxlen: 100 */
 /*global webkitAudioContext: false, createJRemixer: false, jQuery: false, $: false,
-		Waveform: false */
+		Waveform: false, Float32Array: false*/
 var apiKey = 'YLTCU72SODVIC00NB';
 var trackID = 'TRFINBO13C52D7A637';
 var trackURL = 'audio/something.mp3';
@@ -16,14 +16,59 @@ jQuery(document).ready(function ($) {
 		this.analysisTypes = ['sections', 'bars', 'beats', 'fsegments', 'tatums'];
 		this.waveformPoints = {};
 		this.currentType = this.analysisTypes[0];
+		this.audioData = [];
+		this.audioContext = null;
+		this.remixer = null;
+		this.source = null;
+		this.track = null;
+		this.cWidth = null;
+		this.cHeight = null;
+		this.$canvas = null;
+		this.canvas = null;
+		this.context = null;
+		this.secondWave = null;
 	}
 
 	Lyrebird.prototype.init = function () {
-		var self = this;
+		this.audioInit();
+	};
+
+	Lyrebird.prototype.audioInit = function () {
+		this.initPlayback();
+		this.initEchonest();
+	};
+
+	Lyrebird.prototype.initPlayback = function () {
+		var self = this,
+			request = new XMLHttpRequest();
 
 		this.audioContext = new webkitAudioContext();
+		this.source = this.audioContext.createBufferSource;
+
+		request.open('GET', trackURL, true);
+		request.responseType = 'arraybuffer';
+		request.onload = function () {
+			self.audioContext.decodeAudioData(request.response, function (buffer) {
+				var i;
+
+				for (i = 0; i < buffer.numberOfChannels; i++) {
+					self.audioData[i] = new Float32Array(buffer.getChannelData(i));
+				}
+
+				self.source = self.audioContext.createBufferSource();
+				self.source.buffer = buffer;
+				self.source.loop = true;
+				self.source.connect(self.audioContext.destination);
+				// self.source.noteOn(context.currentTime);
+			});
+		};
+		request.send();
+	};
+
+	Lyrebird.prototype.initEchonest = function () {
+		var self = this;
+
 		this.remixer = createJRemixer(this.audioContext, $, apiKey);
-		this.player = this.remixer.getPlayer();
 
 		this.remixer.remixTrackById(trackID, trackURL, function (t, percent) {
 			self.track = t;
@@ -37,16 +82,6 @@ jQuery(document).ready(function ($) {
 				self.drawWaveform();
 			}
 		});
-	};
-
-
-	Lyrebird.prototype.getMousePos = function (canvas, evt) {
-		var rect = this.canvas.getBoundingClientRect();
-
-		return {
-			x: evt.clientX - rect.left,
-			y: evt.clientY - rect.top
-		};
 	};
 
 	Lyrebird.prototype.createWaveformPoints = function () {
@@ -66,22 +101,6 @@ jQuery(document).ready(function ($) {
 		}
 	};
 
-	Lyrebird.prototype.drawLines = function () {
-		var i, points;
-
-		points = this.waveformPoints[this.currentType];
-
-		this.context.beginPath();
-		this.context.strokeStyle = 'red';
-
-		for (i = 0; i < points.length; i++) {
-			this.context.moveTo(points[i], 0);
-			this.context.lineTo(points[i], this.cHeight);
-		}
-
-		this.context.closePath();
-		this.context.stroke();
-	};
 
 	Lyrebird.prototype.drawWaveform = function () {
 		var self = this;
@@ -114,6 +133,37 @@ jQuery(document).ready(function ($) {
 
 		});
 	};
+
+	Lyrebird.prototype.drawLines = function () {
+		var i, points;
+
+		points = this.waveformPoints[this.currentType];
+
+		this.context.beginPath();
+		this.context.strokeStyle = 'red';
+
+		for (i = 0; i < points.length; i++) {
+			this.context.moveTo(points[i], 0);
+			this.context.lineTo(points[i], this.cHeight);
+		}
+
+		this.context.closePath();
+		this.context.stroke();
+	};
+
+	Lyrebird.prototype.getMousePos = function (canvas, evt) {
+		var rect = this.canvas.getBoundingClientRect();
+
+		return {
+			x: evt.clientX - rect.left,
+			y: evt.clientY - rect.top
+		};
+	};
+
+
+	Lyrebird.prototype.play = function (from, to) {
+
+	}
 
 	lyrebird = new Lyrebird();
 	lyrebird.init();
