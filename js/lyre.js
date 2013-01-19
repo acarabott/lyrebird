@@ -28,6 +28,7 @@ jQuery(document).ready(function ($) {
 		this.secondWave = null;
 		this.playbackReady = false;
 		this.fadeDur = 0.05;
+		this.selection = null;
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -80,6 +81,97 @@ jQuery(document).ready(function ($) {
 				self.drawWaveform();
 			}
 		});
+	};
+
+	/**
+	 * clone audio data from the original audioData
+	 * @param   {number} startFrame the first frame to clone from
+	 * @param   {number} endFrame   the frame to stop cloning at (not included in result)
+	 * @returns {array}             array of Float32Array containing raw audio data
+	 */
+	Lyrebird.prototype.cloneAudioData = function (startFrame, endFrame) {
+		var length, data, clone, i, j;
+
+		length = endFrame - startFrame;
+		clone = [];
+
+		if (length > 0) {
+			for (i = 0; i < this.audioData.length; i++) {
+				clone[i] = new Float32Array(length);
+				for (j = 0; j < length; j++) {
+					clone[i][j] = this.audioData[i][startFrame + j];
+				}
+			}
+		}
+
+		return clone;
+	};
+
+	Lyrebird.prototype.getFadeMul = function (index, length, fadeOut) {
+		var mul;
+
+		if (fadeOut) {
+			mul = (length - index) / length;
+		} else {
+			mul = index / length;
+		}
+
+		// square twice to get a more natural quartic curve
+		// ref: Miller Puckette: The Theory and Technique of Electronic Music
+		// http://crca.ucsd.edu/~msp/techniques/latest/book-html/node70.html
+		mul = (mul * mul) * (mul * mul);
+
+		return mul;
+	};
+
+	Lyrebird.prototype.createBuffer = function (data) {
+		var buffer, i, j, fadeFrames, fIndex;
+
+		buffer = this.audioContext.createBuffer(
+			data.length,
+			data[0].length * 2,
+			this.track.buffer.sampleRate
+		);
+
+		fadeFrames = Math.floor(buffer.sampleRate * this.fadeDur);
+
+		for (i = 0; i < data.length; i++) {
+			buffer.getChannelData(i).set(data[i]);
+
+			for (j = 0; j < fadeFrames; j++) {
+				// Fade In (start of audio)
+				buffer.getChannelData(i)[j] *= this.getFadeMul(j, fadeFrames, false);
+
+				fIndex = (data[i].length - fadeFrames) + j;
+				//fade out (end of audio, mid buffer)
+				buffer.getChannelData(i)[fIndex] *= this.getFadeMul(j, fadeFrames, true);
+			}
+		}
+
+		return buffer;
+	};
+
+	Lyrebird.prototype.createSource = function (buffer) {
+		this.source = this.audioContext.createBufferSource();
+		this.source.buffer = buffer;
+		this.source.loop = true;
+		this.source.connect(this.audioContext.destination);
+	};
+
+	Lyrebird.prototype.prepareSelection = function (start, end) {
+		var sr, startFrame, endFrame, buffer;
+
+		sr = this.track.buffer.sampleRate;
+		startFrame = Math.round(start * sr);
+		endFrame = Math.round(end * sr);
+
+		buffer = this.createBuffer(this.cloneAudioData(startFrame, endFrame));
+
+		this.createSource(buffer);
+	};
+
+	Lyrebird.prototype.playSelection = function () {
+		this.source.noteOn(0);
 	};
 
 	Lyrebird.prototype.createWaveformPoints = function () {
@@ -155,11 +247,34 @@ jQuery(document).ready(function ($) {
 		};
 	};
 
+	Lyrebird.prototype.getSelectionFromMouse = function (mousex) {
+		var selection, points, closest, i;
+
+		points = this.waveformPoints[this.currentType];
+		selection = [];
+
+		for (i = 0; i < points.length; i++) {
+			if (mousex >= points[i]) {
+				closest = i;
+
+			}
+		}
+
+		selection[0] = points[closest];
+		if (closest < points.length - 1) {
+			selection[1] = points[closest + 1];
+		} else {
+			selection[1] = this.track.buffer.duration;
+		}
+
+		return selection;
+	};
+
 	Lyrebird.prototype.addMouseAction = function () {
 		var self = this;
 		this.canvas.addEventListener('mousedown', function (event) {
-			self.mousePos = self.getMousePos(this, event);
-			console.log(self.mousePos);
+			var selection = self.getSelectionFromMouse(self.getMousePos(this, event).x);
+			console.log(selection);
 		}, false);
 	};
 
@@ -167,98 +282,6 @@ jQuery(document).ready(function ($) {
 		this.createWaveformPoints();
 		this.drawLines();
 		this.addMouseAction();
-	};
-
-	/**
-	 * clone audio data from the original audioData
-	 * @param   {number} startFrame the first frame to clone from
-	 * @param   {number} endFrame   the frame to stop cloning at (not included in result)
-	 * @returns {array}             array of Float32Array containing raw audio data
-	 */
-	Lyrebird.prototype.cloneAudioData = function (startFrame, endFrame) {
-		var length, data, clone, i, j;
-
-		length = endFrame - startFrame;
-		clone = [];
-
-		if (length > 0) {
-			for (i = 0; i < this.audioData.length; i++) {
-				clone[i] = new Float32Array(length);
-				for (j = 0; j < length; j++) {
-					clone[i][j] = this.audioData[i][startFrame + j];
-				}
-			}
-		}
-
-		return clone;
-	};
-
-	Lyrebird.prototype.getFadeMul = function (index, length, fadeOut) {
-		var mul;
-
-		if (fadeOut) {
-			mul = (length - index) / length;
-		} else {
-			mul = index / length;
-		}
-
-		// square twice to get a more natural quartic curve
-		// ref: Miller Puckette: The Theory and Technique of Electronic Music
-		// http://crca.ucsd.edu/~msp/techniques/latest/book-html/node70.html
-		mul = (mul * mul) * (mul * mul);
-
-		return mul;
-	};
-
-
-	Lyrebird.prototype.createBuffer = function (data) {
-		var buffer, i, j, fadeFrames, fIndex;
-
-		buffer = this.audioContext.createBuffer(
-			data.length,
-			data[0].length * 2,
-			this.track.buffer.sampleRate
-		);
-
-		fadeFrames = Math.floor(buffer.sampleRate * this.fadeDur);
-
-		for (i = 0; i < data.length; i++) {
-			buffer.getChannelData(i).set(data[i]);
-
-			for (j = 0; j < fadeFrames; j++) {
-				// Fade In (start of audio)
-				buffer.getChannelData(i)[j] *= this.getFadeMul(j, fadeFrames, false);
-
-				fIndex = (data[i].length - fadeFrames) + j;
-				//fade out (end of audio, mid buffer)
-				buffer.getChannelData(i)[fIndex] *= this.getFadeMul(j, fadeFrames, true);
-			}
-		}
-
-		return buffer;
-	};
-
-	Lyrebird.prototype.createSource = function (buffer) {
-		this.source = this.audioContext.createBufferSource();
-		this.source.buffer = buffer;
-		this.source.loop = true;
-		this.source.connect(this.audioContext.destination);
-	};
-
-	Lyrebird.prototype.prepareSelection = function (start, end) {
-		var sr, startFrame, endFrame, buffer;
-
-		sr = this.track.buffer.sampleRate;
-		startFrame = Math.round(start * sr);
-		endFrame = Math.round(end * sr);
-
-		buffer = this.createBuffer(this.cloneAudioData(startFrame, endFrame));
-
-		this.createSource(buffer);
-	};
-
-	Lyrebird.prototype.playSelection = function () {
-		this.source.noteOn(0);
 	};
 
 	lyrebird = new Lyrebird();
