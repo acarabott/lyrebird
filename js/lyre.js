@@ -15,6 +15,7 @@ jQuery(document).ready(function ($) {
 	function Lyrebird() {
 		this.analysisTypes = ['sections', 'bars', 'beats', 'fsegments', 'tatums'];
 		this.waveformPoints = {};
+		this.currentType = this.analysisTypes[0];
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -49,71 +50,33 @@ jQuery(document).ready(function ($) {
 	};
 
 	Lyrebird.prototype.createWaveformPoints = function () {
-		var cWidth, cHeight, dur, pos, i, j, type;
+		var dur, pos, i, j, type;
 
-		cWidth = parseFloat(this.$canvas.width(), 10);
-		cHeight = parseFloat(this.$canvas.height(), 10);
+		this.cWidth = parseFloat(this.$canvas.width(), 10);
+		this.cHeight = parseFloat(this.$canvas.height(), 10);
 		dur = this.track.buffer.duration;
 
 		for (i = 0; i < this.analysisTypes.length; i++) {
 			type = this.analysisTypes[i];
 			this.waveformPoints[type] = [];
 			for (j = 0; j < this.track.analysis[type].length; j++) {
-				pos = (parseFloat(this.track.analysis[type][j].start, 10) / dur) * cWidth;
+				pos = (parseFloat(this.track.analysis[type][j].start, 10) / dur) * this.cWidth;
 				this.waveformPoints[type].push(pos);
 			}
 		}
 	};
 
-	Lyrebird.prototype.drawSections = function (track) {
-		var type, types, cWidth, cHeight, dur, pos, i;
+	Lyrebird.prototype.drawLines = function () {
+		var i, points;
 
-		cWidth = parseFloat(this.$canvas.width(), 10);
-		cHeight = parseFloat(this.$canvas.height(), 10);
-		dur = this.track.buffer.duration;
-
-		types = {
-			sections: {
-				color: "yellow"
-			},
-			bars: {
-				color: "gray",
-				show: "true"
-			},
-			beats: {
-				color: "blue"
-			},
-			fsegments: {
-				color: "green"
-			},
-			tatums : {
-				color: "orange"
-			}
-		};
+		points = this.waveformPoints[this.currentType];
 
 		this.context.beginPath();
+		this.context.strokeStyle = 'red';
 
-		for (type in types)	{
-			if (types.hasOwnProperty(type)) {
-				if (types[type].hasOwnProperty('color')) {
-					this.context.strokeStyle = types[type].color;
-				} else {
-					this.context.strokeStyle = 'red';
-				}
-
-				// testing
-				if (types[type].hasOwnProperty('show')) {
-					for (i = 0; i < track.analysis[type].length; i++) {
-						pos = parseFloat(track.analysis[type][i].start, 10);
-						pos = pos / dur;
-						pos = pos * cWidth;
-
-						this.context.moveTo(pos, 0);
-						this.context.lineTo(pos, cHeight);
-					}
-				}
-
-			}
+		for (i = 0; i < points.length; i++) {
+			this.context.moveTo(points[i], 0);
+			this.context.lineTo(points[i], this.cHeight);
 		}
 
 		this.context.closePath();
@@ -139,7 +102,7 @@ jQuery(document).ready(function ($) {
 			}, false);
 
 			self.createWaveformPoints();
-			// drawSections(track);
+			self.drawLines();
 
 			self.secondWave = new Waveform({
 				container: document.getElementById('secondCanvasContainer'),
