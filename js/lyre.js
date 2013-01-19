@@ -174,6 +174,10 @@ jQuery(document).ready(function ($) {
 		this.source.noteOn(0);
 	};
 
+	Lyrebird.prototype.stopSource = function () {
+		this.source.noteOff(0);
+	};
+
 	Lyrebird.prototype.createWaveformPoints = function () {
 		var dur, pos, i, j, type;
 
@@ -248,7 +252,7 @@ jQuery(document).ready(function ($) {
 	};
 
 	Lyrebird.prototype.getSelectionFromMouse = function (mousex) {
-		var selection, points, closest, i;
+		var selection, points, closest, analysis, i;
 
 		points = this.waveformPoints[this.currentType];
 		selection = [];
@@ -256,15 +260,17 @@ jQuery(document).ready(function ($) {
 		for (i = 0; i < points.length; i++) {
 			if (mousex >= points[i]) {
 				closest = i;
-
 			}
 		}
 
-		selection[0] = points[closest];
+		analysis = this.track.analysis[this.currentType][closest];
+
+		selection[0] = parseFloat(analysis.start, 10);
+
 		if (closest < points.length - 1) {
-			selection[1] = points[closest + 1];
+			selection[1] = selection[0] + parseFloat(analysis.duration, 10);
 		} else {
-			selection[1] = this.track.buffer.duration;
+			selection[1] = parseFloat(this.track.buffer.duration, 10);
 		}
 
 		return selection;
@@ -274,7 +280,9 @@ jQuery(document).ready(function ($) {
 		var self = this;
 		this.canvas.addEventListener('mousedown', function (event) {
 			var selection = self.getSelectionFromMouse(self.getMousePos(this, event).x);
-			console.log(selection);
+			self.stopSource();
+			self.prepareSelection(selection[0], selection[1]);
+			self.playSelection();
 		}, false);
 	};
 
