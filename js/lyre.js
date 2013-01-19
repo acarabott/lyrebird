@@ -160,10 +160,23 @@ jQuery(document).ready(function ($) {
 		};
 	};
 
+	Lyrebird.prototype.cloneAudioData = function (startFrame, endFrame) {
+		var length, data, clone, i, j;
 
-	Lyrebird.prototype.play = function (from, to) {
+		length = endFrame - startFrame;
+		clone = [];
 
-	}
+		if (length > 0) {
+			for (i = 0; i < this.audioData.length; i++) {
+				clone[i] = new Float32Array(length);
+				for (j = 0; j < length; j++) {
+					clone[i][j] = this.audioData[i][startFrame + j];
+				}
+			}
+		}
+
+		return clone;
+	};
 
 	lyrebird = new Lyrebird();
 	lyrebird.init();
