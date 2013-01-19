@@ -1,3 +1,23 @@
 # Lyrebird
 
 Learning music by ear
+
+## TODO
+
+### Essential
+- Creating segments
+	- Echonest API
+- Segment selection
+	- Waveform
+- Segment playback
+- Silence between segments
+
+
+
+
+### Potential
+
+- Zoomable waveform
+- 50% / 75% speeds
+- Click
+- Key press add to/move to next segment
