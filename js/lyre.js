@@ -8,7 +8,9 @@ var trackWave = 'data/somethingWave.json';
 
 var remixer, player, track, remixed,
 	$canvas, canvas, context,
-	waveformRequest, waveform, waveformData;
+	waveformRequest, waveform, waveformData,
+	waveformPoints,
+	secondWave;
 
 jQuery(document).ready(function ($) {
 	'use strict';
@@ -22,21 +24,22 @@ jQuery(document).ready(function ($) {
 		dur = track.buffer.duration;
 
 		types = {
-			// sections: {
-			// 	color: "yellow"
-			// },
+			sections: {
+				color: "yellow"
+			},
 			bars: {
-				color: "gray"
+				color: "gray",
+				show: "true"
 			},
 			beats: {
 				color: "blue"
 			},
-			// fsegments: {
-			// 	color: "green"
-			// }
-			// tatums : {
-			// 	color: "orange"
-			// }
+			fsegments: {
+				color: "green"
+			},
+			tatums : {
+				color: "orange"
+			}
 		};
 
 		context.beginPath();
@@ -49,16 +52,18 @@ jQuery(document).ready(function ($) {
 					context.strokeStyle = 'red';
 				}
 
+				// testing
+				if (types[type].hasOwnProperty('show')) {
+					for (i = 0; i < track.analysis[type].length; i++) {
+						pos = parseFloat(track.analysis[type][i].start, 10);
+						pos = pos / dur;
+						pos = pos * cWidth;
 
-				for (i = 0; i < track.analysis[type].length; i++) {
-					pos = parseFloat(track.analysis[type][i].start, 10);
-					pos = pos / dur;
-					pos = pos * cWidth;
-
-					context.moveTo(pos, 0);
-					context.lineTo(pos, cHeight);
-					console.log(pos);
+						context.moveTo(pos, 0);
+						context.lineTo(pos, cHeight);
+					}
 				}
+
 			}
 		}
 
@@ -78,27 +83,35 @@ jQuery(document).ready(function ($) {
 			canvas = $canvas[0];
 			context = canvas.getContext('2d');
 
-			drawSections(track);
+			// drawSections(track);
+
+
+			secondWave = new Waveform({
+				container: document.getElementById('secondCanvasContainer'),
+				data: waveformData.slice(waveformData.length * 0.5, waveformData.length * 0.51)
+			});
+
 		});
 	}
 
 
 	audioContext = new webkitAudioContext();
-	remixer = createJRemixer(audioContext, $, apiKey);
-	player = remixer.getPlayer();
+	drawWaveform();
+	// remixer = createJRemixer(audioContext, $, apiKey);
+	// player = remixer.getPlayer();
 
-	remixer.remixTrackById(trackID, trackURL, function (t, percent) {
-		track = t;
+	// remixer.remixTrackById(trackID, trackURL, function (t, percent) {
+	// 	track = t;
 
-		$('#info').text(percent + "% of the track loaded");
-		if (percent === 100) {
-			$('#info').text(percent + "% of the track loaded, remix time");
-		}
+	// 	$('#info').text(percent + "% of the track loaded");
+	// 	if (percent === 100) {
+	// 		$('#info').text(percent + "% of the track loaded, remix time");
+	// 	}
 
-		if (track.status === 'ok') {
-			drawWaveform();
-		}
-	});
+	// 	if (track.status === 'ok') {
+	// 		drawWaveform();
+	// 	}
+	// });
 
 
 });
