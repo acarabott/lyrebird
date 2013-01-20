@@ -87,10 +87,15 @@ h1 {
 }
 
 /* line 25, ../sass/screen.scss */
+.time {
+  letter-spacing: 2px;
+}
+
+/* line 29, ../sass/screen.scss */
 #markerControls {
   margin-top: 60px;
 }
-/* line 28, ../sass/screen.scss */
+/* line 32, ../sass/screen.scss */
 #markerControls .markerButton {
   background: #00c4b3;
   border: 0;
@@ -102,38 +107,38 @@ h1 {
   font-weight: 200;
   margin: 0;
 }
-/* line 40, ../sass/screen.scss */
+/* line 44, ../sass/screen.scss */
 #markerControls .markerButton:hover {
   cursor: pointer;
 }
-/* line 44, ../sass/screen.scss */
+/* line 48, ../sass/screen.scss */
 #markerControls .markerButton:hover, #markerControls .markerButton.current {
   background: #0f766e;
 }
 
-/* line 49, ../sass/screen.scss */
+/* line 53, ../sass/screen.scss */
 #info {
   line-height: 150px;
   font-size: 40px;
   color: black;
 }
 
-/* line 55, ../sass/screen.scss */
+/* line 59, ../sass/screen.scss */
 #info, #waveformWrap, #selectionWrap {
   margin: 0 auto;
 }
 
-/* line 59, ../sass/screen.scss */
+/* line 63, ../sass/screen.scss */
 #info, #waveformWrap, #canvasContainer {
   width: 1200px;
   height: 150px;
 }
 
-/* line 64, ../sass/screen.scss */
+/* line 68, ../sass/screen.scss */
 #waveformWrap {
   position: relative;
 }
-/* line 66, ../sass/screen.scss */
+/* line 70, ../sass/screen.scss */
 #waveformWrap #songDuration {
   position: absolute;
   right: 10px;
@@ -141,20 +146,20 @@ h1 {
   color: #00c4b3;
 }
 
-/* line 74, ../sass/screen.scss */
+/* line 78, ../sass/screen.scss */
 #selectionWrap {
   width: 400px;
 }
-/* line 78, ../sass/screen.scss */
+/* line 82, ../sass/screen.scss */
 #selectionWrap #secondCanvasContainer {
   width: 400px;
   height: 150px;
 }
-/* line 82, ../sass/screen.scss */
+/* line 86, ../sass/screen.scss */
 #selectionWrap #secondCanvasContainer canvas {
   border: 1px solid #c3c4c6;
 }
-/* line 86, ../sass/screen.scss */
+/* line 90, ../sass/screen.scss */
 #selectionWrap #selectionInfo {
   border: 1px solid #c3c4c6;
   height: 32px;
@@ -162,17 +167,17 @@ h1 {
   background: #c3c4c6;
   position: relative;
 }
-/* line 94, ../sass/screen.scss */
+/* line 98, ../sass/screen.scss */
 #selectionWrap #selectionInfo span {
   position: absolute;
   color: #454646;
   line-height: 32px;
 }
-/* line 101, ../sass/screen.scss */
+/* line 105, ../sass/screen.scss */
 #selectionWrap #selectionInfo #selectionStart {
   left: 10px;
 }
-/* line 105, ../sass/screen.scss */
+/* line 109, ../sass/screen.scss */
 #selectionWrap #selectionInfo #selectionEnd {
   right: 10px;
 }
