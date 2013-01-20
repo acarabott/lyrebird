@@ -87,7 +87,7 @@ jQuery(document).ready(function ($) {
 			}
 
 			if (self.track.status === 'ok' && self.playbackReady) {
-				self.drawWaveform();
+				self.loadWaveformData();
 			}
 		});
 	};
@@ -205,36 +205,46 @@ jQuery(document).ready(function ($) {
 		}
 	};
 
+
 	Lyrebird.prototype.drawWaveform = function () {
 		var self = this;
 
+		self.waveform = new Waveform({
+			container: document.getElementById('canvasContainer'),
+			data: self.waveformData.slice(0),
+			outerColor: '#00C4B3',
+			innerColor: '#00A692'
+		});
+
+		self.$canvas = $('#canvasContainer canvas');
+		self.cWidth = parseFloat(self.$canvas.width(), 10);
+		self.cHeight = parseFloat(self.$canvas.height(), 10);
+
+		self.canvas = self.$canvas[0];
+		self.context = self.canvas.getContext('2d');
+
+		self.createInterface();
+	};
+
+	Lyrebird.prototype.drawSelectionWaveform = function () {
+		var this = self;
+
+		self.secondWave = new Waveform({
+			container: document.getElementById('secondCanvasContainer'),
+			data: self.selectionData,
+			innerColor: '#858686;',
+			outerColor: '#E9EAEB'
+		});
+
+		self.selectionContext = $('#secondCanvasContainer canvas')[0].getContext('2d');
+	};
+
+	Lyrebird.prototype.loadWaveformData = function () {
+		var self = this;
 		$.getJSON(trackWave, function (data) {
 			self.waveformData = data.mid;
-			self.waveform = new Waveform({
-				container: document.getElementById('canvasContainer'),
-				data: self.waveformData.slice(0),
-				outerColor: '#00C4B3',
-				innerColor: '#00A692'
-			});
-
-			self.$canvas = $('#canvasContainer canvas');
-			self.cWidth = parseFloat(self.$canvas.width(), 10);
-			self.cHeight = parseFloat(self.$canvas.height(), 10);
-
-			self.canvas = self.$canvas[0];
-			self.context = self.canvas.getContext('2d');
-
-			self.secondWave = new Waveform({
-				container: document.getElementById('secondCanvasContainer'),
-				data: self.selectionData,
-				innerColor: '#858686;',
-				outerColor: '#E9EAEB'
-			});
-
-			self.selectionContext = $('#secondCanvasContainer canvas')[0].getContext('2d');
-
-			self.createInterface();
-
+			self.drawWaveform();
+			self.drawSelectionWaveform();
 		});
 	};
 
@@ -244,7 +254,7 @@ jQuery(document).ready(function ($) {
 		points = this.waveformPoints[this.currentType];
 
 		this.context.beginPath();
-		this.context.strokeStyle = 'red';
+		this.context.strokeStyle = "rgba(255, 255, 255, 0.8)";
 
 		for (i = 0; i < points.length; i++) {
 			this.context.moveTo(points[i], 0);
@@ -254,6 +264,8 @@ jQuery(document).ready(function ($) {
 		this.context.closePath();
 		this.context.stroke();
 	};
+
+
 
 	Lyrebird.prototype.getMousePos = function (canvas, evt) {
 		var rect = this.canvas.getBoundingClientRect();
