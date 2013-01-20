@@ -30,6 +30,8 @@ jQuery(document).ready(function ($) {
 		this.playbackReady = false;
 		this.fadeDur = 0.05;
 		this.selection = null;
+		this.scriptNode = null;
+		this.startTime = null;
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -39,6 +41,7 @@ jQuery(document).ready(function ($) {
 	Lyrebird.prototype.audioInit = function () {
 		this.initPlayback();
 		this.initEchonest();
+		this.createScriptNode();
 	};
 
 	Lyrebird.prototype.initPlayback = function () {
@@ -172,7 +175,8 @@ jQuery(document).ready(function ($) {
 	};
 
 	Lyrebird.prototype.playSelection = function () {
-		this.source.noteOn(0);
+		this.startTime = this.audioContext.currentTime;
+		this.source.noteOn(this.startTime);
 	};
 
 	Lyrebird.prototype.stopSource = function () {
@@ -286,9 +290,9 @@ jQuery(document).ready(function ($) {
 	Lyrebird.prototype.addMouseAction = function () {
 		var self = this;
 		this.canvas.addEventListener('mousedown', function (event) {
-			var selection = self.getSelectionFromMouse(self.getMousePos(this, event).x);
+			self.selection = self.getSelectionFromMouse(self.getMousePos(this, event).x);
 			self.stopSource();
-			self.prepareSelection(selection[0], selection[1]);
+			self.prepareSelection(self.selection[0], self.selection[1]);
 			self.playSelection();
 		}, false);
 	};
@@ -313,6 +317,26 @@ jQuery(document).ready(function ($) {
 				self.waveformPlay(prev + 1);
 			}
 		}, 80);
+	};
+
+	Lyrebird.prototype.setPlayheadPosition = function () {
+		var dur = this.selection[1] - this.selection[0],
+			mod = (this.audioContext.currentTime - this.startTime) % dur,
+			pos = mod / dur,
+			x = Math.floor(pos * $('#secondCanvasContainer canvas').width());
+		this.updateWaveform(x);
+	};
+
+	Lyrebird.prototype.createScriptNode = function () {
+		var self = this;
+
+		this.scriptNode = this.audioContext.createJavaScriptNode(2048, 2, 2);
+		this.scriptNode.onaudioprocess = function (event) {
+			if (self.startTime !== null) {
+				self.setPlayheadPosition();
+			}
+		};
+		this.scriptNode.connect(this.audioContext.destination);
 	};
 
 	lyrebird = new Lyrebird();
