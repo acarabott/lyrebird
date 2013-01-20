@@ -39,6 +39,9 @@ h1 {
 
 	.markerButton:hover {
 		cursor:pointer;
+	}
+
+	.markerButton:hover, .markerButton.current {
 		background:$hovergreen;
 	}
 }

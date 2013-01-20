@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
 	function Lyrebird() {
 		this.analysisTypes = ['sections', 'bars', 'beats', 'fsegments', 'tatums'];
 		this.waveformPoints = {};
-		this.currentType = this.analysisTypes[1];
+		this.currentType = this.analysisTypes[0];
 		this.audioData = [];
 		this.audioContext = null;
 		this.remixer = null;
@@ -37,6 +37,7 @@ jQuery(document).ready(function ($) {
 		this.selectionDark = '#454646';
 		this.$selectionStart = $('#selectionStart');
 		this.$selectionEnd = $('#selectionEnd');
+		this.$markerButtons = $('.markerButton');
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -207,11 +208,16 @@ jQuery(document).ready(function ($) {
 
 
 	Lyrebird.prototype.drawWaveform = function () {
-		var self = this;
+		var self = this,
+			old = $('#canvasContainer canvas');
+
+		if (old.length !== 0) {
+			old.remove();
+		}
 
 		self.waveform = new Waveform({
 			container: document.getElementById('canvasContainer'),
-			data: self.waveformData.slice(0),
+			data: self.waveformData,
 			outerColor: '#00C4B3',
 			innerColor: '#00A692'
 		});
@@ -222,12 +228,10 @@ jQuery(document).ready(function ($) {
 
 		self.canvas = self.$canvas[0];
 		self.context = self.canvas.getContext('2d');
-
-		self.createInterface();
 	};
 
 	Lyrebird.prototype.drawSelectionWaveform = function () {
-		var this = self;
+		var self = this;
 
 		self.secondWave = new Waveform({
 			container: document.getElementById('secondCanvasContainer'),
@@ -244,6 +248,7 @@ jQuery(document).ready(function ($) {
 		$.getJSON(trackWave, function (data) {
 			self.waveformData = data.mid;
 			self.drawWaveform();
+			self.createInterface();
 			self.drawSelectionWaveform();
 		});
 	};
@@ -265,7 +270,11 @@ jQuery(document).ready(function ($) {
 		this.context.stroke();
 	};
 
-
+	Lyrebird.prototype.changeMarkers = function (type) {
+		this.currentType = type;
+		this.drawWaveform();
+		this.drawLines();
+	};
 
 	Lyrebird.prototype.getMousePos = function (canvas, evt) {
 		var rect = this.canvas.getBoundingClientRect();
@@ -355,10 +364,23 @@ jQuery(document).ready(function ($) {
 		}, false);
 	};
 
+	Lyrebird.prototype.addMarkerButtonActions = function () {
+		var self = this;
+		this.$markerButtons.click(function (event) {
+			var $this = $(this);
+			self.changeMarkers($this.attr('id'));
+			self.$markerButtons.removeClass('current');
+			$this.addClass('current');
+		});
+	};
+
 	Lyrebird.prototype.createInterface = function () {
+		var self = this;
+
 		this.createWaveformPoints();
 		this.drawLines();
 		this.addMouseAction();
+		this.addMarkerButtonActions();
 	};
 
 	Lyrebird.prototype.setPlayheadPosition = function () {
