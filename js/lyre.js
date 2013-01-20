@@ -38,6 +38,8 @@ jQuery(document).ready(function ($) {
 		this.$selectionStart = $('#selectionStart');
 		this.$selectionEnd = $('#selectionEnd');
 		this.$markerButtons = $('.markerButton');
+		this.playing = false;
+		this.$playbackControls = $('.playbackControl');
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -134,12 +136,14 @@ jQuery(document).ready(function ($) {
 		return mul;
 	};
 
-	Lyrebird.prototype.createBuffer = function (data) {
-		var buffer, i, j, fadeFrames, fIndex;
+	Lyrebird.prototype.createBuffer = function (data, loop) {
+		var buffer, bufFrames, i, j, fadeFrames, fIndex;
+
+		bufFrames = loop ? data[0].length * 2 : data[0].length;
 
 		buffer = this.audioContext.createBuffer(
 			data.length,
-			data[0].length * 2,
+			bufFrames,
 			this.track.buffer.sampleRate
 		);
 
@@ -161,32 +165,34 @@ jQuery(document).ready(function ($) {
 		return buffer;
 	};
 
-	Lyrebird.prototype.createSource = function (buffer) {
+	Lyrebird.prototype.createSource = function (buffer, loop) {
 		this.source = this.audioContext.createBufferSource();
 		this.source.buffer = buffer;
-		this.source.loop = true;
+		this.source.loop = loop;
 		this.source.connect(this.audioContext.destination);
 	};
 
-	Lyrebird.prototype.prepareSelection = function (start, end) {
+	Lyrebird.prototype.prepareSelection = function (start, end, loop) {
 		var sr, startFrame, endFrame, buffer;
 
 		sr = this.track.buffer.sampleRate;
 		startFrame = Math.round(start * sr);
 		endFrame = Math.round(end * sr);
 
-		buffer = this.createBuffer(this.cloneAudioData(startFrame, endFrame));
+		buffer = this.createBuffer(this.cloneAudioData(startFrame, endFrame), loop);
 
-		this.createSource(buffer);
+		this.createSource(buffer, loop);
 	};
 
 	Lyrebird.prototype.playSelection = function () {
 		this.startTime = this.audioContext.currentTime;
 		this.source.noteOn(this.startTime);
+		this.playing = true;
 	};
 
 	Lyrebird.prototype.stopSource = function () {
 		this.source.noteOff(0);
+		this.playing = false;
 	};
 
 	Lyrebird.prototype.createWaveformPoints = function () {
@@ -360,8 +366,6 @@ jQuery(document).ready(function ($) {
 			self.selectionData = self.getSelectionData(self.selection);
 			self.setSelectionTimes(self.selection);
 			self.stopSource();
-			self.prepareSelection(self.selection[0], self.selection[1]);
-			self.playSelection();
 		}, false);
 	};
 
@@ -372,6 +376,27 @@ jQuery(document).ready(function ($) {
 			self.changeMarkers($this.attr('id'));
 			self.$markerButtons.removeClass('current');
 			$this.addClass('current');
+		});
+	};
+
+	Lyrebird.prototype.addPlayButtonActions = function () {
+		var self = this,
+			action = function (event, button, loop) {
+				if (self.selection !== null) {
+					self.stopSource();
+					self.prepareSelection(self.selection[0], self.selection[1], loop);
+					self.playSelection();
+					self.$playbackControls.removeClass('current');
+					$(button).addClass('current');
+				}
+			};
+
+		$('#play').click(function (event) {
+			action(event, this, false);
+		});
+
+		$('#loop').click(function (event) {
+			action(event, this, true);
 		});
 	};
 
@@ -386,6 +411,7 @@ jQuery(document).ready(function ($) {
 		this.drawLines();
 		this.addMouseAction();
 		this.addMarkerButtonActions();
+		this.addPlayButtonActions();
 		this.setDurationDisplay();
 	};
 
@@ -407,12 +433,23 @@ jQuery(document).ready(function ($) {
 		// need to update secondcanvas
 	};
 
+	Lyrebird.prototype.onStopPlaying = function () {
+		this.playing = false;
+		this.$playbackControls.removeClass('current');
+	};
+
 	Lyrebird.prototype.createScriptNode = function () {
 		var self = this;
 
 		this.scriptNode = this.audioContext.createJavaScriptNode(2048, 2, 2);
 		this.scriptNode.onaudioprocess = function (event) {
-			if (self.startTime !== null) {
+			if (self.source !== null) {
+				if (self.source.playbackState === 3) {
+					self.onStopPlaying();
+				}
+			}
+
+			if (self.startTime !== null && self.playing) {
 				self.setPlayheadPosition();
 			}
 		};
