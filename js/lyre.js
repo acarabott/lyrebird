@@ -32,7 +32,7 @@ jQuery(document).ready(function ($) {
 		this.selection = null;
 		this.scriptNode = null;
 		this.startTime = null;
-		this.selectionData = null;
+		this.selectionData = [0];
 		this.selectionLight = '#858686';
 		this.selectionDark = '#454646';
 	}
@@ -222,14 +222,6 @@ jQuery(document).ready(function ($) {
 			self.canvas = self.$canvas[0];
 			self.context = self.canvas.getContext('2d');
 
-
-			// TODO REMOVE THIS
-			self.selectionData = self.waveformData.slice(
-				self.waveformData.length * 0.5,
-				self.waveformData.length * 0.51
-			);
-			// END REMOVE
-			//
 			self.secondWave = new Waveform({
 				container: document.getElementById('secondCanvasContainer'),
 				data: self.selectionData,
@@ -295,10 +287,28 @@ jQuery(document).ready(function ($) {
 		return selection;
 	};
 
+	Lyrebird.prototype.getWaveformDataIndexFromTime = function (time) {
+		var index;
+
+		index = time / this.track.buffer.duration;
+		index *= this.waveformData.length;
+		index = Math.round(index);
+
+		return index;
+	};
+
+	Lyrebird.prototype.getSelectionData = function (selection) {
+		return this.waveformData.slice(
+			this.getWaveformDataIndexFromTime(selection[0]),
+			this.getWaveformDataIndexFromTime(selection[1])
+		)
+	};
+
 	Lyrebird.prototype.addMouseAction = function () {
 		var self = this;
 		this.canvas.addEventListener('mousedown', function (event) {
 			self.selection = self.getSelectionFromMouse(self.getMousePos(this, event).x);
+			self.selectionData = self.getSelectionData(self.selection);
 			self.stopSource();
 			self.prepareSelection(self.selection[0], self.selection[1]);
 			self.playSelection();
@@ -311,10 +321,14 @@ jQuery(document).ready(function ($) {
 		this.addMouseAction();
 	};
 
-	Lyrebird.prototype.updateWaveform = function (pos) {
-		var self = this;
+	Lyrebird.prototype.setPlayheadPosition = function () {
+		var self = this,
+			dur = this.selection[1] - this.selection[0],
+			mod = (this.audioContext.currentTime - this.startTime) % dur,
+			pos = mod / dur;
+
 		$('#secondCanvasContainer canvas').remove();
-		this.waveform = new Waveform({
+		this.secondWave = new Waveform({
 			container: document.getElementById('secondCanvasContainer'),
 			data: this.selectionData,
 			outerColor: '#E9EAEB',
@@ -323,24 +337,6 @@ jQuery(document).ready(function ($) {
 			}
 		});
 		// need to update secondcanvas
-	};
-
-	Lyrebird.prototype.waveformPlay = function (prev) {
-		var self = this;
-		setTimeout(function () {
-			self.updateWaveform(prev);
-			if (prev < 400) {
-				self.waveformPlay(prev + 1);
-			}
-		}, 80);
-	};
-
-	Lyrebird.prototype.setPlayheadPosition = function () {
-		var dur = this.selection[1] - this.selection[0],
-			mod = (this.audioContext.currentTime - this.startTime) % dur,
-			pos = mod / dur;
-
-		this.updateWaveform(pos);
 	};
 
 	Lyrebird.prototype.createScriptNode = function () {
