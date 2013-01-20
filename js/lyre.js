@@ -74,7 +74,7 @@ jQuery(document).ready(function ($) {
 
 			$('#info').text(percent + "% of the track loaded");
 			if (percent === 100) {
-				$('#info').text(percent + "% of the track loaded, remix time");
+				$('#info').hide();
 			}
 
 			if (self.track.status === 'ok' && self.playbackReady) {
@@ -202,7 +202,9 @@ jQuery(document).ready(function ($) {
 			self.waveformData = data.mid;
 			self.waveform = new Waveform({
 				container: document.getElementById('canvasContainer'),
-				data: self.waveformData.slice(0)
+				data: self.waveformData.slice(0),
+				outerColor: '#00C4B3',
+				innerColor: '#00A692'
 			});
 
 			self.$canvas = $('#canvasContainer canvas');
@@ -288,7 +290,7 @@ jQuery(document).ready(function ($) {
 
 	Lyrebird.prototype.createInterface = function () {
 		this.createWaveformPoints();
-		this.drawLines();
+		// this.drawLines();
 		this.addMouseAction();
 	};
 

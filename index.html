@@ -6,20 +6,20 @@
 	<script src="js/remix.js"></script>
 	<script src="js/waveform.js"></script>
 	<script src="js/lyre.js"></script>
-	<style>
-	.canvasContainer {
-		width:1500px;
-		height:400px;
-	}
-
-
-</style>
+	<link href="css/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" />
 </head>
 <body>
-	<div id="info">
-		Loading...
+	<h1>Lyrebird</h1>
+	<img src="images/lineopacity.png">
+
+	<div id="markerControls">
+		<button class="markerButton">Beats</button>
+		<button class="markerButton">Bars</button>
+		<button class="markerButton">Sections</button>
+		<button class="markerButton">Custom</button>
 	</div>
 
+	<div id="info">Loading...</div>
 	<div class="canvasContainer" id="canvasContainer"></div>
 	<div class="canvasContainer" id="secondCanvasContainer"></div>
 </body>

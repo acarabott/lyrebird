@@ -1,0 +1,129 @@
+@import url(http://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800|Asap);
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+/* line 17, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, ../../../../../../../../usr/local/Cellar/ruby/1.9.3-p362/lib/ruby/gems/1.9.1/gems/compass-0.12.2/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+/* line 10, ../sass/screen.scss */
+body {
+  font-family: "Dosis", Arial, sans-serif;
+  text-align: center;
+}
+
+/* line 15, ../sass/screen.scss */
+h1, h2, h3, h4, h5 h6 {
+  font-weight: 700;
+  color: #00c4b3;
+}
+
+/* line 20, ../sass/screen.scss */
+h1 {
+  font-size: 96px;
+  margin: 20px 0 20px;
+}
+
+/* line 25, ../sass/screen.scss */
+#markerControls {
+  margin-top: 60px;
+}
+/* line 28, ../sass/screen.scss */
+#markerControls .markerButton {
+  background: #00c4b3;
+  border: 0;
+  text-transform: lowercase;
+  color: white;
+  padding: 12px 0;
+  width: 97px;
+  font-size: 14px;
+  font-weight: 200;
+  margin: 0;
+}
+/* line 40, ../sass/screen.scss */
+#markerControls .markerButton:hover {
+  cursor: pointer;
+  background: #0f766e;
+}
+
+/* line 46, ../sass/screen.scss */
+#info, .canvasContainer {
+  width: 1200px;
+  height: 400px;
+  margin: 0 auto;
+}
+
+/* line 52, ../sass/screen.scss */
+#info {
+  line-height: 400px;
+  font-size: 40px;
+  color: white;
+  background-color: #00c4b3;
+}
+
+/* line 59, ../sass/screen.scss */
+.canvasContainer {
+  margin: 0 auto;
+}

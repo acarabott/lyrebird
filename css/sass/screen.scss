@@ -1,0 +1,61 @@
+/* Welcome to Compass.
+ * In this file you should write your main styles. (or centralize your imports)
+ * Import this file using the following HTML or equivalent:
+ * <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css" /> */
+
+@import "compass/reset";
+@import "_colors";
+@import url(http://fonts.googleapis.com/css?family=Dosis:200,300,400,500,600,700,800|Asap);
+
+body {
+	font-family: 'Dosis', Arial, sans-serif;
+	text-align:center;
+}
+
+h1, h2, h3, h4, h5 h6 {
+	font-weight: 700;
+	color:$green;
+}
+
+h1 {
+	font-size:96px;
+	margin: 20px 0 20px;
+}
+
+#markerControls {
+	margin-top:60px;
+
+	.markerButton {
+		background:$green;
+		border:0;
+		text-transform:lowercase;
+		color:white;
+		padding: 12px 0;
+		width:97px;
+		font-size:14px;
+		font-weight:200;
+		margin:0;
+	}
+
+	.markerButton:hover {
+		cursor:pointer;
+		background:$hovergreen;
+	}
+}
+
+#info, .canvasContainer {
+	width:1200px;
+	height:400px;
+	margin:0 auto;
+}
+
+#info {
+	line-height:400px;
+	font-size:40px;
+	color:white;
+	background-color:$green;
+}
+
+.canvasContainer {
+	margin:0 auto;
+}
