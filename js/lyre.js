@@ -383,12 +383,19 @@ jQuery(document).ready(function ($) {
 	Lyrebird.prototype.addPlayButtonActions = function () {
 		var self = this,
 			action = function (event, button, loop) {
+				var $button = $(button);
 				if (self.selection !== null) {
 					self.stopSource();
-					self.prepareSelection(self.selection[0], self.selection[1], loop);
-					self.playSelection();
-					self.$playbackControls.removeClass('current');
-					$(button).addClass('current');
+
+					if ($button.hasClass('current')) {
+						$button.removeClass('current');
+						self.setPlayheadPosition(true);
+					} else {
+						self.prepareSelection(self.selection[0], self.selection[1], loop);
+						self.playSelection();
+						self.$playbackControls.removeClass('current');
+						$button.addClass('current');
+					}
 				}
 			};
 
