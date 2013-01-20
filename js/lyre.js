@@ -375,6 +375,10 @@ jQuery(document).ready(function ($) {
 		});
 	};
 
+	Lyrebird.prototype.setDurationDisplay = function () {
+		$('#songDuration').text(this.formatTime(this.track.buffer.duration));
+	};
+
 	Lyrebird.prototype.createInterface = function () {
 		var self = this;
 
@@ -382,6 +386,7 @@ jQuery(document).ready(function ($) {
 		this.drawLines();
 		this.addMouseAction();
 		this.addMarkerButtonActions();
+		this.setDurationDisplay();
 	};
 
 	Lyrebird.prototype.setPlayheadPosition = function () {
