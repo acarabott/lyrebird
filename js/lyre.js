@@ -342,7 +342,7 @@ jQuery(document).ready(function ($) {
 		var mins = Math.floor(seconds / 60),
 			secs = Math.floor(seconds % 60);
 
-		return this.zeroPad(mins) + ":" + this.zeroPad(secs);
+		return mins + ":" + this.zeroPad(secs);
 	};
 
 	Lyrebird.prototype.setSelectionTimes = function (selection) {
