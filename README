@@ -11,8 +11,6 @@ Learning music by ear
 	- Waveform
 - Segment playback
 - Silence between segments
-- update selection gui on click
-
 
 
 ### Potential
@@ -22,6 +20,6 @@ Learning music by ear
 - Click
 - Key press add to/move to next segment
 - scratchy playback
-
+- second color for silent playback
 ### Optimise
 - cache buffers?

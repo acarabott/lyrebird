@@ -35,6 +35,8 @@ jQuery(document).ready(function ($) {
 		this.selectionData = [0];
 		this.selectionLight = '#858686';
 		this.selectionDark = '#454646';
+		this.$selectionStart = $('#selectionStart');
+		this.$selectionEnd = $('#selectionEnd');
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -304,11 +306,37 @@ jQuery(document).ready(function ($) {
 		)
 	};
 
+	Lyrebird.prototype.zeroPad = function (number) {
+		if (number < 10) {
+			number = "0" + number;
+			number = number.substring(number.length - 2, number.length);
+		} else {
+			number = number.toString();
+		}
+
+		return number;
+	};
+
+	Lyrebird.prototype.formatTime = function (seconds) {
+		var mins = Math.floor(seconds / 60),
+			secs = Math.floor(seconds % 60);
+
+		return this.zeroPad(mins) + ":" + this.zeroPad(secs);
+	};
+
+	Lyrebird.prototype.setSelectionTimes = function (selection) {
+		var start, end;
+
+		this.$selectionStart.text(this.formatTime(selection[0]));
+		this.$selectionEnd.text(this.formatTime(selection[1]));
+	};
+
 	Lyrebird.prototype.addMouseAction = function () {
 		var self = this;
 		this.canvas.addEventListener('mousedown', function (event) {
 			self.selection = self.getSelectionFromMouse(self.getMousePos(this, event).x);
 			self.selectionData = self.getSelectionData(self.selection);
+			self.setSelectionTimes(self.selection);
 			self.stopSource();
 			self.prepareSelection(self.selection[0], self.selection[1]);
 			self.playSelection();
