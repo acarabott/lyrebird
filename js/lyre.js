@@ -380,7 +380,6 @@ jQuery(document).ready(function ($) {
 			}
 		} else {
 			if (this.selectionIndex < analysis.length - 1) {
-				console.log('this');
 				this.selection[1] = parseFloat(analysis[this.selectionIndex += 1].start, 10);
 			} else {
 				this.selection[1] = parseFloat(this.track.buffer.duration, 10);
