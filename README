@@ -4,22 +4,16 @@ Learning music by ear
 
 ## TODO
 
-### Essential
-- Creating segments
-	- Echonest API
-- Segment selection
-	- Waveform
-- Segment playback
-- Silence between segments
-
-
-### Potential
-
+- Extending current selection (arrows keys)
+- Single shot button (space bar)
+- Loop button (shift space)
 - Zoomable waveform
 - 50% / 75% speeds
-- Click
 - Key press add to/move to next segment
-- scratchy playback
+- Track / Artist details
+
+### Design
 - second color for silent playback
+
 ### Optimise
 - cache buffers?
