@@ -43,19 +43,64 @@ h1 {
 	}
 }
 
-#info, .canvasContainer {
-	width:1200px;
-	height:400px;
-	margin:0 auto;
-}
-
 #info {
-	line-height:400px;
+	line-height:150px;
 	font-size:40px;
-	color:white;
-	background-color:$green;
+	color:black;
 }
 
-.canvasContainer {
+#info, #waveformWrap, #selectionWrap {
 	margin:0 auto;
+}
+
+#info, #waveformWrap, #canvasContainer {
+	width:1200px;
+	height:150px;
+}
+
+#waveformWrap {
+	position:relative;
+	#songDuration {
+		position:absolute;
+		right:10px;
+		bottom:-20px;
+		color:$green;
+	}
+}
+
+#selectionWrap {
+	$width:400px;
+	width:$width;
+
+	#secondCanvasContainer {
+		width:$width;
+		height:150px;
+
+		canvas {
+			border:1px solid $selectioninfogrey;
+		}
+	}
+	#selectionInfo {
+		border:1px solid $selectioninfogrey;
+		$height:32px;
+		height:$height;
+		width:$width;
+		background: $selectioninfogrey;
+		position:relative;
+
+		span {
+			position:absolute;
+			color:$selectiondark;
+			line-height:$height;
+		}
+
+		$indent:10px;
+		#selectionStart {
+			left:$indent;
+		}
+
+		#selectionEnd {
+			right:$indent;
+		}
+	}
 }

@@ -109,21 +109,67 @@ h1 {
 }
 
 /* line 46, ../sass/screen.scss */
-#info, .canvasContainer {
-  width: 1200px;
-  height: 400px;
-  margin: 0 auto;
+#info {
+  line-height: 150px;
+  font-size: 40px;
+  color: black;
 }
 
 /* line 52, ../sass/screen.scss */
-#info {
-  line-height: 400px;
-  font-size: 40px;
-  color: white;
-  background-color: #00c4b3;
+#info, #waveformWrap, #selectionWrap {
+  margin: 0 auto;
 }
 
-/* line 59, ../sass/screen.scss */
-.canvasContainer {
-  margin: 0 auto;
+/* line 56, ../sass/screen.scss */
+#info, #waveformWrap, #canvasContainer {
+  width: 1200px;
+  height: 150px;
+}
+
+/* line 61, ../sass/screen.scss */
+#waveformWrap {
+  position: relative;
+}
+/* line 63, ../sass/screen.scss */
+#waveformWrap #songDuration {
+  position: absolute;
+  right: 10px;
+  bottom: -20px;
+  color: #00c4b3;
+}
+
+/* line 71, ../sass/screen.scss */
+#selectionWrap {
+  width: 400px;
+}
+/* line 75, ../sass/screen.scss */
+#selectionWrap #secondCanvasContainer {
+  width: 400px;
+  height: 150px;
+}
+/* line 79, ../sass/screen.scss */
+#selectionWrap #secondCanvasContainer canvas {
+  border: 1px solid #c3c4c6;
+}
+/* line 83, ../sass/screen.scss */
+#selectionWrap #selectionInfo {
+  border: 1px solid #c3c4c6;
+  height: 32px;
+  width: 400px;
+  background: #c3c4c6;
+  position: relative;
+}
+/* line 91, ../sass/screen.scss */
+#selectionWrap #selectionInfo span {
+  position: absolute;
+  color: #454646;
+  line-height: 32px;
+}
+/* line 98, ../sass/screen.scss */
+#selectionWrap #selectionInfo #selectionStart {
+  left: 10px;
+}
+/* line 102, ../sass/screen.scss */
+#selectionWrap #selectionInfo #selectionEnd {
+  right: 10px;
 }

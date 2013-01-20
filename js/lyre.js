@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
 	function Lyrebird() {
 		this.analysisTypes = ['sections', 'bars', 'beats', 'fsegments', 'tatums'];
 		this.waveformPoints = {};
-		this.currentType = this.analysisTypes[2];
+		this.currentType = this.analysisTypes[1];
 		this.audioData = [];
 		this.audioContext = null;
 		this.remixer = null;
@@ -219,7 +219,9 @@ jQuery(document).ready(function ($) {
 				data: self.waveformData.slice(
 					self.waveformData.length * 0.5,
 					self.waveformData.length * 0.51
-				)
+				),
+				innerColor: '#858686;',
+				outerColor: '#E9EAEB'
 			});
 
 			self.createInterface();
@@ -290,7 +292,7 @@ jQuery(document).ready(function ($) {
 
 	Lyrebird.prototype.createInterface = function () {
 		this.createWaveformPoints();
-		// this.drawLines();
+		this.drawLines();
 		this.addMouseAction();
 	};
 
