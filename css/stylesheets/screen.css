@@ -74,28 +74,40 @@ body {
   text-align: center;
 }
 
-/* line 15, ../sass/screen.scss */
+/* line 16, ../sass/screen.scss */
 h1, h2, h3, h4, h5 h6 {
   font-weight: 700;
   color: #00c4b3;
 }
 
-/* line 20, ../sass/screen.scss */
+/* line 21, ../sass/screen.scss */
 h1 {
   font-size: 96px;
   margin: 20px 0 20px;
 }
 
-/* line 25, ../sass/screen.scss */
+/* line 26, ../sass/screen.scss */
+button {
+  background: transparent;
+  border: 0;
+  margin: 0;
+}
+
+/* line 32, ../sass/screen.scss */
+button:hover {
+  cursor: pointer;
+}
+
+/* line 36, ../sass/screen.scss */
 .time {
   letter-spacing: 2px;
 }
 
-/* line 29, ../sass/screen.scss */
+/* line 40, ../sass/screen.scss */
 #markerControls {
   margin-top: 60px;
 }
-/* line 32, ../sass/screen.scss */
+/* line 43, ../sass/screen.scss */
 #markerControls .markerButton {
   background: #00c4b3;
   border: 0;
@@ -107,38 +119,34 @@ h1 {
   font-weight: 200;
   margin: 0;
 }
-/* line 44, ../sass/screen.scss */
-#markerControls .markerButton:hover {
-  cursor: pointer;
-}
-/* line 48, ../sass/screen.scss */
+/* line 55, ../sass/screen.scss */
 #markerControls .markerButton:hover, #markerControls .markerButton.current {
   background: #0f766e;
 }
 
-/* line 53, ../sass/screen.scss */
+/* line 60, ../sass/screen.scss */
 #info {
   line-height: 150px;
   font-size: 40px;
   color: black;
 }
 
-/* line 59, ../sass/screen.scss */
+/* line 66, ../sass/screen.scss */
 #info, #waveformWrap, #selectionWrap {
   margin: 0 auto;
 }
 
-/* line 63, ../sass/screen.scss */
+/* line 70, ../sass/screen.scss */
 #info, #waveformWrap, #canvasContainer {
   width: 1200px;
   height: 150px;
 }
 
-/* line 68, ../sass/screen.scss */
+/* line 75, ../sass/screen.scss */
 #waveformWrap {
   position: relative;
 }
-/* line 70, ../sass/screen.scss */
+/* line 77, ../sass/screen.scss */
 #waveformWrap #songDuration {
   position: absolute;
   right: 10px;
@@ -146,20 +154,20 @@ h1 {
   color: #00c4b3;
 }
 
-/* line 78, ../sass/screen.scss */
+/* line 85, ../sass/screen.scss */
 #selectionWrap {
   width: 400px;
 }
-/* line 82, ../sass/screen.scss */
+/* line 89, ../sass/screen.scss */
 #selectionWrap #secondCanvasContainer {
   width: 400px;
   height: 150px;
 }
-/* line 86, ../sass/screen.scss */
+/* line 93, ../sass/screen.scss */
 #selectionWrap #secondCanvasContainer canvas {
   border: 1px solid #c3c4c6;
 }
-/* line 90, ../sass/screen.scss */
+/* line 97, ../sass/screen.scss */
 #selectionWrap #selectionInfo {
   border: 1px solid #c3c4c6;
   height: 32px;
@@ -167,17 +175,55 @@ h1 {
   background: #c3c4c6;
   position: relative;
 }
-/* line 98, ../sass/screen.scss */
+/* line 105, ../sass/screen.scss */
 #selectionWrap #selectionInfo span {
   position: absolute;
   color: #454646;
   line-height: 32px;
 }
-/* line 105, ../sass/screen.scss */
+/* line 112, ../sass/screen.scss */
 #selectionWrap #selectionInfo #selectionStart {
   left: 10px;
 }
-/* line 109, ../sass/screen.scss */
+/* line 116, ../sass/screen.scss */
 #selectionWrap #selectionInfo #selectionEnd {
   right: 10px;
+}
+
+/* line 122, ../sass/screen.scss */
+#playbackControls {
+  margin: 32px 0;
+}
+/* line 125, ../sass/screen.scss */
+#playbackControls button {
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  margin: 0 5px;
+}
+/* line 132, ../sass/screen.scss */
+#playbackControls #play {
+  background: url("../../images/playsprite.png") no-repeat top left;
+  background-position: 0 0;
+  width: 19px;
+  height: 21px;
+}
+/* line 137, ../sass/screen.scss */
+#playbackControls #play:hover {
+  background-position: 0 -71px;
+  width: 19px;
+  height: 22px;
+}
+/* line 141, ../sass/screen.scss */
+#playbackControls #loop {
+  background-position: 0 0;
+  width: 25px;
+  height: 25px;
+  background: url("../../images/loopsprite.png") no-repeat top left;
+}
+/* line 146, ../sass/screen.scss */
+#playbackControls #loop:hover {
+  background-position: 0 -75px;
+  width: 25px;
+  height: 25px;
 }

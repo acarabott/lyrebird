@@ -10,6 +10,7 @@
 body {
 	font-family: 'Dosis', Arial, sans-serif;
 	text-align:center;
+// 	background:$background;
 }
 
 h1, h2, h3, h4, h5 h6 {
@@ -20,6 +21,16 @@ h1, h2, h3, h4, h5 h6 {
 h1 {
 	font-size:96px;
 	margin: 20px 0 20px;
+}
+
+button {
+	background: transparent;
+	border: 0;
+	margin: 0;
+}
+
+button:hover {
+	cursor:pointer
 }
 
 .time {
@@ -39,10 +50,6 @@ h1 {
 		font-size:14px;
 		font-weight:200;
 		margin:0;
-	}
-
-	.markerButton:hover {
-		cursor:pointer;
 	}
 
 	.markerButton:hover, .markerButton.current {
@@ -109,5 +116,34 @@ h1 {
 		#selectionEnd {
 			right:$indent;
 		}
+	}
+}
+
+#playbackControls {
+	margin:32px 0;
+
+	button {
+		display:inline-block;
+		width:25px;
+		height:25px;
+		margin:0 5px;
+	}
+
+	#play {
+		background: url("../../images/playsprite.png") no-repeat top left;
+		background-position: 0 0; width: 19px; height: 21px;
+	}
+
+	#play:hover {
+		background-position: 0 -71px; width: 19px; height: 22px;
+	}
+
+	#loop {
+		background-position: 0 0; width: 25px; height: 25px;
+		background: url("../../images/loopsprite.png") no-repeat top left;
+	}
+
+	#loop:hover {
+		background-position: 0 -75px; width: 25px; height: 25px;
 	}
 }
