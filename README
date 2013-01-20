@@ -24,3 +24,13 @@ Learning music by ear
 
 ### Optimise
 - cache buffers?
+
+
+### Animating
+jQuery animate with duration time
+expanding white div?
+second canvas underneath?
+cache canvas before animating and then make new canvas from old canvas
+scriptNode...
+tween.js
+requestanimationframe
