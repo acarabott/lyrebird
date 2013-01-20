@@ -209,7 +209,7 @@ button:hover {
   height: 21px;
 }
 /* line 137, ../sass/screen.scss */
-#playbackControls #play:hover {
+#playbackControls #play:hover, #playbackControls #play.current {
   background-position: 0 -71px;
   width: 19px;
   height: 22px;
@@ -222,7 +222,7 @@ button:hover {
   background: url("../../images/loopsprite.png") no-repeat top left;
 }
 /* line 146, ../sass/screen.scss */
-#playbackControls #loop:hover {
+#playbackControls #loop:hover, #playbackControls #loop.current {
   background-position: 0 -75px;
   width: 25px;
   height: 25px;
