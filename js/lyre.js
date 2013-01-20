@@ -25,6 +25,7 @@ jQuery(document).ready(function ($) {
 		this.$canvas = null;
 		this.canvas = null;
 		this.context = null;
+		this.selectionContext = null;
 		this.secondWave = null;
 		this.playbackReady = false;
 		this.fadeDur = 0.05;
@@ -224,6 +225,8 @@ jQuery(document).ready(function ($) {
 				outerColor: '#E9EAEB'
 			});
 
+			self.selectionContext = $('#secondCanvasContainer canvas')[0].getContext('2d');
+
 			self.createInterface();
 
 		});
@@ -271,7 +274,7 @@ jQuery(document).ready(function ($) {
 
 		selection[0] = parseFloat(analysis.start, 10);
 
-		if (closest < points.length - 1) {
+		if (closest < points.length - 0) {
 			selection[1] = selection[0] + parseFloat(analysis.duration, 10);
 		} else {
 			selection[1] = parseFloat(this.track.buffer.duration, 10);
@@ -294,6 +297,22 @@ jQuery(document).ready(function ($) {
 		this.createWaveformPoints();
 		this.drawLines();
 		this.addMouseAction();
+	};
+
+	Lyrebird.prototype.updateWaveform = function (x) {
+		this.selectionContext.fillStyle = '#454646';
+		this.selectionContext.globalAlpha = 0.5; // Half opacity
+		this.selectionContext.fillRect(x, 0, 1, 150);
+	};
+
+	Lyrebird.prototype.waveformPlay = function (prev) {
+		var self = this;
+		setTimeout(function () {
+			self.updateWaveform(prev);
+			if (prev < 400) {
+				self.waveformPlay(prev + 1);
+			}
+		}, 80);
 	};
 
 	lyrebird = new Lyrebird();
