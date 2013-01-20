@@ -11,7 +11,7 @@ Learning music by ear
 	- Waveform
 - Segment playback
 - Silence between segments
-
+- update selection gui on click
 
 
 
@@ -21,16 +21,7 @@ Learning music by ear
 - 50% / 75% speeds
 - Click
 - Key press add to/move to next segment
+- scratchy playback
 
 ### Optimise
 - cache buffers?
-
-
-### Animating
-jQuery animate with duration time
-expanding white div?
-second canvas underneath?
-cache canvas before animating and then make new canvas from old canvas
-scriptNode...
-tween.js
-requestanimationframe

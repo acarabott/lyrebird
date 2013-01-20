@@ -32,6 +32,9 @@ jQuery(document).ready(function ($) {
 		this.selection = null;
 		this.scriptNode = null;
 		this.startTime = null;
+		this.selectionData = null;
+		this.selectionLight = '#858686';
+		this.selectionDark = '#454646';
 	}
 
 	Lyrebird.prototype.init = function () {
@@ -219,12 +222,17 @@ jQuery(document).ready(function ($) {
 			self.canvas = self.$canvas[0];
 			self.context = self.canvas.getContext('2d');
 
+
+			// TODO REMOVE THIS
+			self.selectionData = self.waveformData.slice(
+				self.waveformData.length * 0.5,
+				self.waveformData.length * 0.51
+			);
+			// END REMOVE
+			//
 			self.secondWave = new Waveform({
 				container: document.getElementById('secondCanvasContainer'),
-				data: self.waveformData.slice(
-					self.waveformData.length * 0.5,
-					self.waveformData.length * 0.51
-				),
+				data: self.selectionData,
 				innerColor: '#858686;',
 				outerColor: '#E9EAEB'
 			});
@@ -303,10 +311,18 @@ jQuery(document).ready(function ($) {
 		this.addMouseAction();
 	};
 
-	Lyrebird.prototype.updateWaveform = function (x) {
-		this.selectionContext.fillStyle = '#454646';
-		this.selectionContext.globalAlpha = 0.5; // Half opacity
-		this.selectionContext.fillRect(x, 0, 1, 150);
+	Lyrebird.prototype.updateWaveform = function (pos) {
+		var self = this;
+		$('#secondCanvasContainer canvas').remove();
+		this.waveform = new Waveform({
+			container: document.getElementById('secondCanvasContainer'),
+			data: this.selectionData,
+			outerColor: '#E9EAEB',
+			innerColor: function (wx, wy) {
+				return wx <= pos ? self.selectionDark : self.selectionLight;
+			}
+		});
+		// need to update secondcanvas
 	};
 
 	Lyrebird.prototype.waveformPlay = function (prev) {
@@ -322,9 +338,9 @@ jQuery(document).ready(function ($) {
 	Lyrebird.prototype.setPlayheadPosition = function () {
 		var dur = this.selection[1] - this.selection[0],
 			mod = (this.audioContext.currentTime - this.startTime) % dur,
-			pos = mod / dur,
-			x = Math.floor(pos * $('#secondCanvasContainer canvas').width());
-		this.updateWaveform(x);
+			pos = mod / dur;
+
+		this.updateWaveform(pos);
 	};
 
 	Lyrebird.prototype.createScriptNode = function () {
