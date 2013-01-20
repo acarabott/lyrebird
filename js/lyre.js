@@ -302,7 +302,7 @@ jQuery(document).ready(function ($) {
 
 		selection[0] = parseFloat(analysis.start, 10);
 
-		if (closest < points.length - 0) {
+		if (closest < points.length - 1) {
 			selection[1] = selection[0] + parseFloat(analysis.duration, 10);
 		} else {
 			selection[1] = parseFloat(this.track.buffer.duration, 10);
@@ -325,7 +325,7 @@ jQuery(document).ready(function ($) {
 		return this.waveformData.slice(
 			this.getWaveformDataIndexFromTime(selection[0]),
 			this.getWaveformDataIndexFromTime(selection[1])
-		)
+		);
 	};
 
 	Lyrebird.prototype.zeroPad = function (number) {
