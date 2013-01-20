@@ -30,6 +30,7 @@ jQuery(document).ready(function ($) {
 		this.playbackReady = false;
 		this.fadeDur = 0.05;
 		this.selection = null;
+		this.selectionIndex = null;
 		this.scriptNode = null;
 		this.startTime = null;
 		this.selectionData = [0];
@@ -293,22 +294,22 @@ jQuery(document).ready(function ($) {
 	};
 
 	Lyrebird.prototype.getSelectionFromMouse = function (mousex) {
-		var selection, points, closest, analysis, i;
+		var selection, points, analysis, i;
 
 		points = this.waveformPoints[this.currentType];
 		selection = [];
 
 		for (i = 0; i < points.length; i++) {
 			if (mousex >= points[i]) {
-				closest = i;
+				this.selectionIndex = i;
 			}
 		}
 
-		analysis = this.track.analysis[this.currentType][closest];
+		analysis = this.track.analysis[this.currentType][this.selectionIndex];
 
 		selection[0] = parseFloat(analysis.start, 10);
 
-		if (closest < points.length - 1) {
+		if (this.selectionIndex < points.length - 1) {
 			selection[1] = selection[0] + parseFloat(analysis.duration, 10);
 		} else {
 			selection[1] = parseFloat(this.track.buffer.duration, 10);
@@ -370,6 +371,42 @@ jQuery(document).ready(function ($) {
 		}, false);
 	};
 
+	Lyrebird.prototype.extendSelection = function (left) {
+		var analysis = this.track.analysis[this.currentType];
+
+		if (left) {
+			if (this.selectionIndex > 0) {
+				this.selection[0] = parseFloat(analysis[this.selectionIndex -= 1].start, 10);
+			}
+		} else {
+			if (this.selectionIndex < analysis.length - 1) {
+				console.log('this');
+				this.selection[1] = parseFloat(analysis[this.selectionIndex += 1].start, 10);
+			} else {
+				this.selection[1] = parseFloat(this.track.buffer.duration, 10);
+			}
+		}
+
+		this.selectionData = this.getSelectionData(this.selection);
+		this.setSelectionTimes(this.selection);
+		this.stopSource();
+		this.setPlayheadPosition(true);
+	};
+
+	Lyrebird.prototype.addArrowkeyActions = function () {
+		var self = this;
+		$(document).keypress(function (event) {
+			var keyCode = event.keyCode;
+			if (self.selection !== null) {
+				if (keyCode === 44) {
+					self.extendSelection(true);
+				} else if (keyCode === 46) {
+					self.extendSelection(false);
+				}
+			}
+		});
+	};
+
 	Lyrebird.prototype.addMarkerButtonActions = function () {
 		var self = this;
 		this.$markerButtons.click(function (event) {
@@ -418,6 +455,7 @@ jQuery(document).ready(function ($) {
 		this.createWaveformPoints();
 		this.drawLines();
 		this.addMouseAction();
+		this.addArrowkeyActions();
 		this.addMarkerButtonActions();
 		this.addPlayButtonActions();
 		this.setDurationDisplay();
