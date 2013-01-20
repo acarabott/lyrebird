@@ -274,6 +274,7 @@ jQuery(document).ready(function ($) {
 		this.currentType = type;
 		this.drawWaveform();
 		this.drawLines();
+		this.addMouseAction();
 	};
 
 	Lyrebird.prototype.getMousePos = function (canvas, evt) {
