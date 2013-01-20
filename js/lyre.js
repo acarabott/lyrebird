@@ -366,6 +366,7 @@ jQuery(document).ready(function ($) {
 			self.selectionData = self.getSelectionData(self.selection);
 			self.setSelectionTimes(self.selection);
 			self.stopSource();
+			self.setPlayheadPosition(true);
 		}, false);
 	};
 
@@ -415,22 +416,23 @@ jQuery(document).ready(function ($) {
 		this.setDurationDisplay();
 	};
 
-	Lyrebird.prototype.setPlayheadPosition = function () {
+	Lyrebird.prototype.setPlayheadPosition = function (reset) {
 		var self = this,
 			dur = this.selection[1] - this.selection[0],
 			mod = (this.audioContext.currentTime - this.startTime) % dur,
-			pos = mod / dur;
+			pos = mod / dur,
+			inner = reset ? self.selectionLight : function (wx, wy) {
+				return wx <= pos ? self.selectionDark : self.selectionLight;
+			};
 
 		$('#secondCanvasContainer canvas').remove();
 		this.secondWave = new Waveform({
 			container: document.getElementById('secondCanvasContainer'),
 			data: this.selectionData,
 			outerColor: '#E9EAEB',
-			innerColor: function (wx, wy) {
-				return wx <= pos ? self.selectionDark : self.selectionLight;
-			}
+			innerColor: inner
 		});
-		// need to update secondcanvas
+		// TODO need to update secondcanvas?
 	};
 
 	Lyrebird.prototype.onStopPlaying = function () {
@@ -450,7 +452,7 @@ jQuery(document).ready(function ($) {
 			}
 
 			if (self.startTime !== null && self.playing) {
-				self.setPlayheadPosition();
+				self.setPlayheadPosition(false);
 			}
 		};
 		this.scriptNode.connect(this.audioContext.destination);
